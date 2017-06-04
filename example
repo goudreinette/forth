@@ -3,8 +3,14 @@
 class Box
   is-open -- instance *values*
 
-  open: -- symbol ending with a ':' treated as method def
+  open -- symbol ending with a ':' treated as method def
     is-open = true -- '=' makes an immutable copy
 
-  close:
+  close
     is-open = false
+
+  set x
+    is-open = x
+
+  open?
+    is-open
