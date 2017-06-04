@@ -3,24 +3,20 @@ module Parser where
 import           Text.Parsec.Indent
 import           Text.Parsec.Prim              (runParserT)
 import           Text.ParserCombinators.Parsec hiding (Parser, parse)
+import           Types
 
 type Parser a = IndentParser String () a
 
-data Expr = NamedList Name [Item]
-    deriving Show
-
-type Name = String
-type Item = String
 
 expr :: Parser Expr
 expr = namedList
+
 
 namedList :: Parser Expr
 namedList = do
   b <- withBlock NamedList name item
   spaces
   return b
-
 
 name :: Parser Name
 name = do
@@ -35,13 +31,6 @@ item = do
    spaces
    return i
 
-
-inputText = unlines [
-        "listName:",
-        "  item1",
-        "  item2",
-        "  item3"
-    ]
 
 
 parse :: String -> Either ParseError Expr
