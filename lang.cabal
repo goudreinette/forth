@@ -1,0 +1,29 @@
+name:                lang
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/author/lang
+license:             MIT
+author:              Author
+maintainer:          author@domain.com
+copyright:           2017 Author
+category:            Language
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  readme.md
+
+executable lang
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  -- other-modules:       Eval, Env, Primitives, Parse, Types
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5,
+                       transformers,
+                       parsec,
+                       mtl,
+                       haskeline-repl,
+                       monadplus,
+                       uri,
+                       lens,
+                       wreq,
+                       tostring
