@@ -1,8 +1,8 @@
 module Types where
 
 
-data Val = NamedList Name [Val]
-         | Identifier Name
+data Object = NamedList Name [Object]
+            | Identifier Name
     deriving Show
 
 
