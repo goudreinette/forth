@@ -8,11 +8,11 @@ import           Types
 type Parser a = IndentParser String () a
 
 
-expr :: Parser Object
+expr :: Parser Val
 expr = namedList <|> identifier
 
 
-namedList :: Parser Object
+namedList :: Parser Val
 namedList = do
   b <- withBlock NamedList name identifier
   spaces
@@ -25,7 +25,7 @@ name = do
    spaces
    return s
 
-identifier :: Parser Object
+identifier :: Parser Val
 identifier = do
    i <- many1 alphaNum
    spaces
@@ -33,7 +33,7 @@ identifier = do
 
 
 
-parse :: String -> Either ParseError Object
+parse :: String -> Either ParseError Val
 parse input =
   runIndent $ runParserT expr () "indent" input
 

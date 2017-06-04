@@ -14,3 +14,6 @@ class Box
 
   open?
     is-open
+
+
+Box.
