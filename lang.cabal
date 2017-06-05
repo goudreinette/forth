@@ -1,8 +1,8 @@
-name:                lang
+name:                forth
 version:             0.1.0.0
 -- synopsis:
 -- description:
-homepage:            https://github.com/author/lang
+homepage:            https://github.com/author/forth
 license:             MIT
 author:              Author
 maintainer:          author@domain.com
@@ -12,7 +12,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  readme.md
 
-executable lang
+executable forth
   hs-source-dirs:      src
   main-is:             Main.hs
   other-modules:       Parser, Types, Eval
