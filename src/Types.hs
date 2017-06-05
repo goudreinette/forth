@@ -47,16 +47,22 @@ pop = do
 printStack :: Forth ()
 printStack = do
   (ForthState s e) <- get
-  liftIO $ print s
+  let str = "|" ++ unwords (map show s) ++ "|"
+  liftIO $ putStrLn str
 
 
 -- Val
 data Val = Number Int
          | Word WordType
          | Nil
-         deriving Show
 
 
 data WordType = Primitive String
               | User
               deriving Show
+
+instance Show Val where
+  show (Number n)           = show n
+  show (Word (Primitive w)) = show w
+  show (Word (User))        = "<user>"
+  show Nil                  = "ok"
