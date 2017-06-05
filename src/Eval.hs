@@ -4,21 +4,21 @@ import           Control.Monad.State
 import           Types
 
 
-eval :: Stack -> Val -> IO Val
-eval stack val = do
+eval :: Val -> Forth Val
+eval val = do
   r <- case val of
     Number n -> do
-      push stack val
+      push val
       return Nil
     Word (Primitive ".") ->
-      pop stack
+      pop
     _ -> return Nil
-  printStack stack
+  printStack
   return r
 
 
 
 
 
-evalMany :: Stack -> [Val] -> IO Val
-evalMany stack vals = last <$> traverse (eval stack) vals
+evalMany ::  [Val] -> Forth Val
+evalMany vals = last <$> traverse eval vals

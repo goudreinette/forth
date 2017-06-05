@@ -26,6 +26,7 @@ executable lang
                        parsec,
                        indents,
                        parsec-numbers,
+                       haskeline,
                        haskeline-repl,
                        monadplus,
                        uri,

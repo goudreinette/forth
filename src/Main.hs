@@ -4,14 +4,29 @@ import           Control.Monad.Trans
 import           Data.IORef
 import           Eval
 import           Parser
+import           System.Console.Haskeline
 import           System.Console.Repl
 import           Types
 
-evalLine stack x =
-  case parseLine x of
-    Right v -> evalMany stack v >>= (liftIO . print)
-    Left e  -> liftIO (printError e)
+evalLine :: String -> Forth ()
+evalLine line =
+  case parseLine line of
+    Right vs -> do
+      r <- evalMany vs
+      liftIO (print r)
+    Left e   -> liftIO (printError e)
 
-main = do
-  s <- newIORef []
-  repl "=> " (evalLine s)
+main =
+  repl
+  where repl =
+          runInputT defaultSettings (loop new)
+        loop state = do
+          line <- getInputLine "=> "
+          case line of
+            Just ":q" ->
+              return ()
+            Just input -> do
+              (r, state) <- liftIO $ run (evalLine input) state
+              loop state
+            Nothing ->
+              loop state

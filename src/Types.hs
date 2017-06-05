@@ -1,40 +1,51 @@
 module Types where
 
+import           Control.Monad.State
 import           Data.IORef
 import           Data.List.Extra
 
 -- Forth
-data Forth = Forth { stack :: Stack
-                   , env   :: Env}
+newtype Forth a = Forth
+  { unForth :: StateT ForthState IO a }
+  deriving (Functor, Applicative, Monad,
+            MonadIO, MonadState ForthState)
+
+data ForthState = ForthState { stack :: Stack
+                             , env   :: Env}
+
+type Stack =  [Val]
+type Env = [(String, Val)]
+
+run :: Forth a -> ForthState -> IO (a, ForthState)
+run x =
+  runStateT (unForth x)
+
+new :: ForthState
+new = ForthState [] []
 
 
 -- Stack
-type Stack = IORef [Val]
-type Env = IORef [(String, Val)]
+push :: Val -> Forth ()
+push v =
+  modify pushV
+  where pushV (ForthState xs e) =
+          ForthState (v:xs) e
 
-push :: Stack -> Val -> IO ()
-push stack v =
-  modifyIORef stack (cons v)
 
-pop :: Stack -> IO Val
-pop stack = do
-  s <- readIORef stack
+pop :: Forth Val
+pop = do
+  (ForthState s e) <- get
   case s of
     [] ->
       return Nil
     (x:xs) -> do
-      writeIORef stack xs
+      put (ForthState xs e)
       return x
 
-printStack :: Stack -> IO ()
-printStack stack = do
-  s <- readIORef stack
-  print s
-
-new = do
-  s <- newIORef []
-  e <- newIORef []
-  return (Forth s e)
+printStack :: Forth ()
+printStack = do
+  (ForthState s e) <- get
+  liftIO $ print s
 
 
 -- Val
