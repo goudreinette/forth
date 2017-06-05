@@ -1,8 +1,9 @@
 flags: {}
 extra-package-dbs: []
 packages:
-- '.'
+- .
 extra-deps:
 - haskeline-repl-0.3.0.0
+- parsec-numbers-0.1.0
 - uri-0.1.6.4
 resolver: lts-8.5

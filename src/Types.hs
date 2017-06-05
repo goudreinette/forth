@@ -1,19 +1,49 @@
 module Types where
 
 import           Data.IORef
+import           Data.List.Extra
 
-data Method = Method
-    deriving (Show)
-
-data Val = NamedList Name [Val]
-         | Identifier Name
-         | Object { class'     :: Val,
-                    attributes :: [(String, Val)] }
-         | Class { className       :: Name,
-                   instanceMethods :: [(String, Method)] }
-    deriving Show
+-- Forth
+data Forth = Forth { stack :: Stack
+                   , env   :: Env}
 
 
+-- Stack
+type Stack = IORef [Val]
+type Env = IORef [(String, Val)]
 
-type Name = String
-type Item = String
+push :: Stack -> Val -> IO ()
+push stack v =
+  modifyIORef stack (cons v)
+
+pop :: Stack -> IO Val
+pop stack = do
+  s <- readIORef stack
+  case s of
+    [] ->
+      return Nil
+    (x:xs) -> do
+      writeIORef stack xs
+      return x
+
+printStack :: Stack -> IO ()
+printStack stack = do
+  s <- readIORef stack
+  print s
+
+new = do
+  s <- newIORef []
+  e <- newIORef []
+  return (Forth s e)
+
+
+-- Val
+data Val = Number Int
+         | Word WordType
+         | Nil
+         deriving Show
+
+
+data WordType = Primitive String
+              | User
+              deriving Show

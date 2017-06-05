@@ -15,13 +15,17 @@ extra-source-files:  readme.md
 executable lang
   hs-source-dirs:      src
   main-is:             Main.hs
-  other-modules:       Parser, Types
+  other-modules:       Parser, Types, Eval
   default-language:    Haskell2010
+  extensions:          GeneralizedNewtypeDeriving
+  ghc-options:         -fwarn-incomplete-patterns
   build-depends:       base >= 4.7 && < 5,
+                       extra,
                        transformers,
                        mtl,
                        parsec,
                        indents,
+                       parsec-numbers,
                        haskeline-repl,
                        monadplus,
                        uri,
