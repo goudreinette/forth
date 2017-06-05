@@ -7,11 +7,14 @@ import           Types
 eval :: Val -> Forth Val
 eval val = do
   r <- case val of
-    Number n -> do
+    Number n ->
       push val
-      return Nil
     Word (Primitive ".") ->
       pop
+    Word (Primitive "+") -> do
+      (Number x) <- pop
+      (Number y) <- pop
+      push (Number (x + y))
     _ -> return Nil
   printStack
   return r

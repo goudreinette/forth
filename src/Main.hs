@@ -16,6 +16,7 @@ evalLine line =
       liftIO (print r)
     Left e   -> liftIO (printError e)
 
+
 main =
   repl
   where repl =

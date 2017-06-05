@@ -16,6 +16,7 @@ data ForthState = ForthState { stack :: Stack
 type Stack =  [Val]
 type Env = [(String, Val)]
 
+
 run :: Forth a -> ForthState -> IO (a, ForthState)
 run x =
   runStateT (unForth x)
@@ -25,9 +26,10 @@ new = ForthState [] []
 
 
 -- Stack
-push :: Val -> Forth ()
-push v =
+push :: Val -> Forth Val
+push v = do
   modify pushV
+  return Nil
   where pushV (ForthState xs e) =
           ForthState (v:xs) e
 

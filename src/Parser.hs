@@ -9,14 +9,14 @@ exprs :: Parser [Val]
 exprs = sepBy expr spaces
 
 expr :: Parser Val
-expr = number <|> word
+expr = word <|> number
 
 number :: Parser Val
 number = Number <$> int
 
 word :: Parser Val
 word = do
-  w <- oneOf "."
+  w <- oneOf ".+-/*"
   return $ Word (Primitive [w])
 
 
