@@ -9,12 +9,9 @@ eval val = do
   r <- case val of
     Number n ->
       push val
-    Word (Primitive ".") ->
-      pop
-    Word (Primitive "+") -> do
-      (Number x) <- pop
-      (Number y) <- pop
-      push (Number (x + y))
+    Word w -> do
+      (Primitive op) <- envLookup w
+      op
     _ -> return Nil
   printStack
   return r

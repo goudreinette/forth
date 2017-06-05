@@ -21,8 +21,20 @@ run :: Forth a -> ForthState -> IO (a, ForthState)
 run x =
   runStateT (unForth x)
 
-new :: ForthState
-new = ForthState [] []
+new :: [(String, Forth Val)] -> ForthState
+new bindings =
+  ForthState [] env
+  where env = map wrap bindings
+        wrap (s,f) = (s, Primitive f)
+
+envLookup :: String -> Forth Val
+envLookup w = do
+  (ForthState s e) <- get
+  case lookup w e of
+    Just w ->
+      return w
+    Nothing ->
+      undefined
 
 
 -- Stack
@@ -53,16 +65,14 @@ printStack = do
 
 -- Val
 data Val = Number Int
-         | Word WordType
+         | Word String
+         | Primitive (Forth Val)
          | Nil
 
 
-data WordType = Primitive String
-              | User
-              deriving Show
 
 instance Show Val where
-  show (Number n)           = show n
-  show (Word (Primitive w)) = show w
-  show (Word (User))        = "<user>"
-  show Nil                  = "ok"
+  show (Number n)    = show n
+  show (Word s)      = s
+  show (Primitive _) = "<primitive>"
+  show Nil           = "ok"

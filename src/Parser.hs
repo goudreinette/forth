@@ -16,8 +16,8 @@ number = Number <$> int
 
 word :: Parser Val
 word = do
-  w <- oneOf ".+-/*"
-  return $ Word (Primitive [w])
+  w <- many1 (oneOf ".+-/*" <|> letter)
+  return $ Word w
 
 
 -- API
