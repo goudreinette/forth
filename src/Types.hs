@@ -10,13 +10,14 @@ newtype Forth a = Forth
   deriving (Functor, Applicative, Monad,
             MonadIO, MonadState ForthState)
 
-data ForthState = ForthState { stack :: Stack
-                             , dict  :: Dictionary
-                             , mode  :: Mode }
+data ForthState = ForthState { interpretStack :: Stack
+                             , compileStack   :: Stack
+                             , mode           :: Mode
+                             , dict           :: Dictionary }
                              deriving (Show)
 
-data Mode = Interpreting
-          | Compiling Stack
+data Mode = Interpret
+          | Compile
           deriving (Show)
 
 
@@ -30,9 +31,32 @@ run x =
 
 new :: [(String, Forth Val)] -> ForthState
 new bindings =
-  ForthState [] dict Interpreting
+  ForthState [] [] Interpret dict
   where dict = map wrap bindings
         wrap (s,f) = (s, Primitive f)
+
+modifyState :: (ForthState -> ForthState) -> Forth Val
+modifyState f = do
+  modify f
+  return Nil
+
+
+currentStack :: ForthState -> Stack
+currentStack state =
+  case mode state of
+    Interpret -> interpretStack state
+    Compile   -> compileStack state
+
+setCurrentStack :: ForthState -> Stack -> ForthState
+setCurrentStack state stack =
+  case mode state of
+    Interpret -> state {interpretStack = stack}
+    Compile   -> state {compileStack = stack}
+
+updateCurrentStack :: (Stack -> Stack) -> ForthState -> ForthState
+updateCurrentStack f state =
+  setCurrentStack state $ f $ currentStack state
+
 
 -- Env
 dictLookup :: String -> Forth Val
@@ -47,10 +71,10 @@ dictLookup w = do
 
 -- Compiling
 compileMode :: Forth Val
-compileMode = setMode (Compiling [])
+compileMode = setMode Compile
 
 interpretMode :: Forth Val
-interpretMode = setMode Interpreting
+interpretMode = setMode Interpret
 
 setMode :: Mode -> Forth Val
 setMode m = do
@@ -58,39 +82,29 @@ setMode m = do
   get >>= liftIO . print
   return Nil
 
-compilePush :: Val -> Forth Val
-compilePush v = do
-  modify pushV
-  return Nil
-  where pushV state@ForthState {mode = (Compiling xs)} =
-          state { mode = Compiling (v:xs)}
-        pushV state =
-          state
+
 
 
 
 -- Stack
 push :: Val -> Forth Val
-push v = do
-  modify pushV
-  return Nil
-  where pushV state@ForthState {stack = xs} =
-          state {stack = v:xs}
+push v = modifyState (updateCurrentStack (cons v))
 
 
 pop :: Forth Val
 pop = do
   state <- get
-  case stack state of
+  case currentStack state of
     [] ->
       return Nil
     (x:xs) -> do
-      put (state {stack = xs})
+      put (setCurrentStack state xs)
       return x
+
 
 printStack :: Forth ()
 printStack = do
-  s <- stack <$> get
+  s <- currentStack <$> get
   let str = "|" ++ unwords (map show s) ++ "|"
   liftIO $ putStrLn str
 
