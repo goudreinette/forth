@@ -51,13 +51,21 @@ dictLookup w = do
     Nothing ->
       error ("Lookup failed: " ++ w)
 
+defineWord :: String -> Val -> Forth ()
+defineWord s v = do
+  modifyState addBinding
+  where addBinding = cons
+
 
 -- Compiling
 compileMode :: Forth Val
 compileMode = setMode Compile
 
 interpretMode :: Forth Val
-interpretMode = setMode Interpret
+interpretMode = do
+  s <- stack <$> get
+
+  setMode Interpret
 
 setMode :: Mode -> Forth Val
 setMode m =
@@ -110,6 +118,7 @@ printStack = do
 data Val = Number Int
          | Word String
          | Primitive (Forth Val)
+         | User [Val]
          | Nil
 
 

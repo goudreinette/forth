@@ -12,21 +12,22 @@ eval val = do
     Word w -> do
       s <- get
       case mode s of
-        Compile | w == ";" -> do
-          (Primitive op) <- dictLookup w
-          op
+        Compile | w == ";" ->
+          dictLookup w >>= invoke
         Compile ->
           push (Word w)
-        Interpret -> do
-          (Primitive op) <- dictLookup w
-          op
+        Interpret ->
+          dictLookup w >>= invoke
     _ -> return Nil
   printStack
   return r
 
 
-
-
-
 evalMany ::  [Val] -> Forth Val
 evalMany vals = last <$> traverse eval vals
+
+
+-- Invoke
+invoke :: Val -> Forth Val
+invoke (Primitive op) = op
+invoke (User stack)   = evalMany stack
