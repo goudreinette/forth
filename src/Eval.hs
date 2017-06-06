@@ -10,8 +10,16 @@ eval val = do
     Number n ->
       push val
     Word w -> do
-      (Primitive op) <- dictLookup w
-      op
+      s <- get
+      case mode s of
+        Compile | w == ";" -> do
+          (Primitive op) <- dictLookup w
+          op
+        Compile ->
+          push (Word w)
+        Interpret -> do
+          (Primitive op) <- dictLookup w
+          op
     _ -> return Nil
   printStack
   return r

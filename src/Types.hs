@@ -41,23 +41,6 @@ modifyState f = do
   return Nil
 
 
-stack :: ForthState -> Stack
-stack state =
-  case mode state of
-    Interpret -> interpretStack state
-    Compile   -> compileStack state
-
-setStack :: ForthState -> Stack -> ForthState
-setStack state stack =
-  case mode state of
-    Interpret -> state {interpretStack = stack}
-    Compile   -> state {compileStack = stack}
-
-updateStack :: (Stack -> Stack) -> ForthState -> ForthState
-updateStack f state =
-  setStack state $ f $ stack state
-
-
 -- Env
 dictLookup :: String -> Forth Val
 dictLookup w = do
@@ -66,7 +49,7 @@ dictLookup w = do
     Just w ->
       return w
     Nothing ->
-      undefined
+      error ("Lookup failed: " ++ w)
 
 
 -- Compiling
@@ -84,6 +67,23 @@ setMode m =
 
 
 -- Stack
+stack :: ForthState -> Stack
+stack state =
+  case mode state of
+    Interpret -> interpretStack state
+    Compile   -> compileStack state
+
+setStack :: ForthState -> Stack -> ForthState
+setStack state stack =
+  case mode state of
+    Interpret -> state {interpretStack = stack}
+    Compile   -> state {compileStack = stack}
+
+updateStack :: (Stack -> Stack) -> ForthState -> ForthState
+updateStack f state =
+  setStack state $ f $ stack state
+
+
 push :: Val -> Forth Val
 push v = modifyState (updateStack (cons v))
 
@@ -102,7 +102,7 @@ pop = do
 printStack :: Forth ()
 printStack = do
   s <- stack <$> get
-  let str = "|" ++ unwords (map show s) ++ "|"
+  let str = "|" ++ unwords (map show (reverse s)) ++ "|"
   liftIO $ putStrLn str
 
 
