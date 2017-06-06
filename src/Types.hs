@@ -41,21 +41,21 @@ modifyState f = do
   return Nil
 
 
-currentStack :: ForthState -> Stack
-currentStack state =
+stack :: ForthState -> Stack
+stack state =
   case mode state of
     Interpret -> interpretStack state
     Compile   -> compileStack state
 
-setCurrentStack :: ForthState -> Stack -> ForthState
-setCurrentStack state stack =
+setStack :: ForthState -> Stack -> ForthState
+setStack state stack =
   case mode state of
     Interpret -> state {interpretStack = stack}
     Compile   -> state {compileStack = stack}
 
-updateCurrentStack :: (Stack -> Stack) -> ForthState -> ForthState
-updateCurrentStack f state =
-  setCurrentStack state $ f $ currentStack state
+updateStack :: (Stack -> Stack) -> ForthState -> ForthState
+updateStack f state =
+  setStack state $ f $ stack state
 
 
 -- Env
@@ -85,23 +85,23 @@ setMode m =
 
 -- Stack
 push :: Val -> Forth Val
-push v = modifyState (updateCurrentStack (cons v))
+push v = modifyState (updateStack (cons v))
 
 
 pop :: Forth Val
 pop = do
   state <- get
-  case currentStack state of
+  case stack state of
     [] ->
       return Nil
     (x:xs) -> do
-      put (setCurrentStack state xs)
+      put (setStack state xs)
       return x
 
 
 printStack :: Forth ()
 printStack = do
-  s <- currentStack <$> get
+  s <- stack <$> get
   let str = "|" ++ unwords (map show s) ++ "|"
   liftIO $ putStrLn str
 
