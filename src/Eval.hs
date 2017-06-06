@@ -9,13 +9,13 @@ eval val = do
   r <- case val of
     Number n ->
       push val
-    Word w -> do
+    Symbol w -> do
       s <- get
       case mode s of
         Compile | w == ";" ->
           dictLookup w >>= invoke
         Compile ->
-          push (Word w)
+          push (Symbol w)
         Interpret ->
           dictLookup w >>= invoke
     _ -> return Nil

@@ -17,7 +17,7 @@ number = Number <$> int
 word :: Parser Val
 word = do
   w <- many1 (oneOf ".+-/*:;" <|> letter)
-  return $ Word w
+  return $ Symbol w
 
 
 -- API

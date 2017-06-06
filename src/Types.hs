@@ -71,7 +71,7 @@ compileMode = setMode Compile
 
 interpretMode :: Forth Val
 interpretMode = do
-  (Word w:body) <- reverse . stack <$> get
+  (Symbol w:body) <- reverse . stack <$> get
   defineWord w (User body)
   modify (`setStack` [])
   setMode Interpret
@@ -127,7 +127,7 @@ printStack = do
 
 -- Val
 data Val = Number Int
-         | Word String
+         | Symbol String
          | Primitive (Forth Val)
          | User [Val]
          | Nil
@@ -136,7 +136,7 @@ data Val = Number Int
 
 instance Show Val where
   show (Number n)    = show n
-  show (Word s)      = s
+  show (Symbol s)      = s
   show (User _)      = "<user>"
   show (Primitive _) = "<primitive>"
   show Nil           = "ok"
