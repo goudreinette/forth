@@ -10,10 +10,15 @@ newtype Forth a = Forth
   deriving (Functor, Applicative, Monad,
             MonadIO, MonadState ForthState)
 
-data ForthState = ForthState { stack     :: Stack
-                             , dict      :: Dictionary
-                             , compiling :: Bool }
+data ForthState = ForthState { stack :: Stack
+                             , dict  :: Dictionary
+                             , mode  :: Mode }
                              deriving (Show)
+
+data Mode = Interpreting
+          | Compiling Stack
+          deriving (Show)
+
 
 type Stack =  [Val]
 type Dictionary = [(String, Val)]
@@ -25,7 +30,7 @@ run x =
 
 new :: [(String, Forth Val)] -> ForthState
 new bindings =
-  ForthState [] dict False
+  ForthState [] dict Interpreting
   where dict = map wrap bindings
         wrap (s,f) = (s, Primitive f)
 
@@ -39,18 +44,28 @@ dictLookup w = do
     Nothing ->
       undefined
 
+
 -- Compiling
 compileMode :: Forth Val
-compileMode = setCompiling True
+compileMode = setMode (Compiling [])
 
 interpretMode :: Forth Val
-interpretMode = setCompiling False
+interpretMode = setMode Interpreting
 
-setCompiling :: Bool -> Forth Val
-setCompiling x = do
-  modify $ \state -> state {compiling = x}
+setMode :: Mode -> Forth Val
+setMode m = do
+  modify $ \state -> state {mode = m}
   get >>= liftIO . print
   return Nil
+
+compilePush :: Val -> Forth Val
+compilePush v = do
+  modify pushV
+  return Nil
+  where pushV state@ForthState {mode = (Compiling xs)} =
+          state { mode = Compiling (v:xs)}
+        pushV state =
+          state
 
 
 
