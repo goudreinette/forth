@@ -27,6 +27,7 @@ evalMany ::  [Val] -> Forth Val
 evalMany vals = last <$> traverse eval vals
 
 
+
 -- Invoke
 invoke :: Val -> Forth Val
 invoke (Primitive op) = op

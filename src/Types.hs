@@ -51,10 +51,11 @@ dictLookup w = do
     Nothing ->
       error ("Lookup failed: " ++ w)
 
-defineWord :: String -> Val -> Forth ()
-defineWord s v = do
-  modifyState addBinding
-  where addBinding = cons
+defineWord :: String -> Val -> Forth Val
+defineWord s v =
+  modifyState $ \state@ForthState {dict = d} ->
+    state {dict = (s, v):d}
+
 
 
 -- Compiling
@@ -126,5 +127,6 @@ data Val = Number Int
 instance Show Val where
   show (Number n)    = show n
   show (Word s)      = s
+  show (User _)      = "<user>"
   show (Primitive _) = "<primitive>"
   show Nil           = "ok"
