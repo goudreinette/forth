@@ -14,7 +14,11 @@ primitiveWords =
 
    (".", pop),
    ("dup", dup),
-   ("swap", swap)]
+   ("swap", swap),
+
+   (":", compileMode),
+   (";", interpretMode)]
+
 
 -- Helpers
 numOp f = do

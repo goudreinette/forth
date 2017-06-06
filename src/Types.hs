@@ -13,6 +13,7 @@ newtype Forth a = Forth
 data ForthState = ForthState { stack     :: Stack
                              , env       :: Env
                              , compiling :: Bool }
+                             deriving (Show)
 
 type Stack =  [Val]
 type Env = [(String, Val)]
@@ -28,6 +29,7 @@ new bindings =
   where env = map wrap bindings
         wrap (s,f) = (s, Primitive f)
 
+-- Env
 envLookup :: String -> Forth Val
 envLookup w = do
   e <- env <$> get
@@ -36,6 +38,20 @@ envLookup w = do
       return w
     Nothing ->
       undefined
+
+-- Compiling
+compileMode :: Forth Val
+compileMode = setCompiling True
+
+interpretMode :: Forth Val
+interpretMode = setCompiling False
+
+setCompiling :: Bool -> Forth Val
+setCompiling x = do
+  modify $ \state -> state {compiling = x}
+  get >>= liftIO . print
+  return Nil
+
 
 
 -- Stack
