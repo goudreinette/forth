@@ -1,5 +1,6 @@
 module Main where
 
+import           Control.Monad.State
 import           Control.Monad.Trans
 import           Data.IORef
 import           Eval
@@ -14,6 +15,8 @@ evalLine line =
   case parseLine line of
     Right vs -> do
       r <- evalMany vs
+      s <- get
+      liftIO (print s)
       liftIO (print r)
     Left e   -> liftIO (printError e)
 

@@ -77,11 +77,8 @@ interpretMode :: Forth Val
 interpretMode = setMode Interpret
 
 setMode :: Mode -> Forth Val
-setMode m = do
-  modify $ \state -> state {mode = m}
-  get >>= liftIO . print
-  return Nil
-
+setMode m =
+  modifyState $ \state -> state {mode = m}
 
 
 
