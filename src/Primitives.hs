@@ -17,7 +17,9 @@ dictionary =
    ("swap", swap),
 
    (":", compileMode),
-   (";", interpretMode)]
+   (";", interpretMode),
+
+   ("words", printDict)]
 
 
 -- Helpers

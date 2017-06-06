@@ -41,7 +41,7 @@ modifyState f = do
   return Nil
 
 
--- Env
+-- Dictionary
 dictLookup :: String -> Forth Val
 dictLookup w = do
   e <- dict <$> get
@@ -52,21 +52,20 @@ dictLookup w = do
       error ("Lookup failed: " ++ w)
 
 defineWord :: String -> Val -> Forth Val
-defineWord s v = do
-  d  <- dict <$> get
-  liftIO (print d)
-
-  modify $ \state@ForthState {dict = d} ->
+defineWord s v =
+  modifyState $ \state@ForthState {dict = d} ->
     state {dict = (s, v):d}
 
-  d  <- dict <$> get
+printDict :: Forth Val
+printDict = do
+  d <- dict <$> get
   liftIO (print d)
   return Nil
 
 
 
 
--- Compiling
+-- Mode
 compileMode :: Forth Val
 compileMode = setMode Compile
 
@@ -81,7 +80,9 @@ setMode :: Mode -> Forth Val
 setMode m =
   modifyState $ \state -> state {mode = m}
 
-
+showMode :: Mode -> String
+showMode Interpret = "i"
+showMode Compile   = "c"
 
 
 -- Stack
@@ -119,8 +120,8 @@ pop = do
 
 printStack :: Forth ()
 printStack = do
-  s <- stack <$> get
-  let str = "|" ++ unwords (map show (reverse s)) ++ "|"
+  state <- get
+  let str =  showMode (mode state) ++ "|" ++ unwords (map show (reverse (stack state))) ++ "|"
   liftIO $ putStrLn str
 
 

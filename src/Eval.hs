@@ -32,3 +32,4 @@ evalMany vals = last <$> traverse eval vals
 invoke :: Val -> Forth Val
 invoke (Primitive op) = op
 invoke (User stack)   = evalMany stack
+invoke x              = error ("not a valid word: " ++ show x)
