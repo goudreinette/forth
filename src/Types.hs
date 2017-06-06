@@ -10,8 +10,9 @@ newtype Forth a = Forth
   deriving (Functor, Applicative, Monad,
             MonadIO, MonadState ForthState)
 
-data ForthState = ForthState { stack :: Stack
-                             , env   :: Env}
+data ForthState = ForthState { stack     :: Stack
+                             , env       :: Env
+                             , compiling :: Bool }
 
 type Stack =  [Val]
 type Env = [(String, Val)]
@@ -23,13 +24,13 @@ run x =
 
 new :: [(String, Forth Val)] -> ForthState
 new bindings =
-  ForthState [] env
+  ForthState [] env False
   where env = map wrap bindings
         wrap (s,f) = (s, Primitive f)
 
 envLookup :: String -> Forth Val
 envLookup w = do
-  (ForthState s e) <- get
+  e <- env <$> get
   case lookup w e of
     Just w ->
       return w
@@ -42,23 +43,23 @@ push :: Val -> Forth Val
 push v = do
   modify pushV
   return Nil
-  where pushV (ForthState xs e) =
-          ForthState (v:xs) e
+  where pushV state@ForthState {stack = xs} =
+          state {stack = v:xs}
 
 
 pop :: Forth Val
 pop = do
-  (ForthState s e) <- get
-  case s of
+  state <- get
+  case stack state of
     [] ->
       return Nil
     (x:xs) -> do
-      put (ForthState xs e)
+      put (state {stack = xs})
       return x
 
 printStack :: Forth ()
 printStack = do
-  (ForthState s e) <- get
+  s <- stack <$> get
   let str = "|" ++ unwords (map show s) ++ "|"
   liftIO $ putStrLn str
 
