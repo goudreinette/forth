@@ -129,6 +129,7 @@ printStack = do
 data Val = Number Int
          | Symbol String
          | Word { immediate:: Bool, wordType :: WordType }
+         | Var (IORef Val)
          | Nil
 
 data WordType = Primitive (Forth Val)
@@ -140,4 +141,5 @@ instance Show Val where
   show (Symbol s)                    = s
   show Word {wordType = User _}      = "<user>"
   show Word {wordType = Primitive _} = "<primitive>"
+  show (Var _)  = "<var>"
   show Nil                           = "ok"
