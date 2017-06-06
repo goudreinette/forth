@@ -2,7 +2,7 @@ module Primitives where
 
 import           Types
 
-primitiveWords =
+dictionary =
   [("+", numBinOp (+)),
    ("-", numBinOp (-)),
    ("*", numBinOp (*)),

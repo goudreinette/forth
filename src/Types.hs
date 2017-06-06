@@ -11,12 +11,12 @@ newtype Forth a = Forth
             MonadIO, MonadState ForthState)
 
 data ForthState = ForthState { stack     :: Stack
-                             , env       :: Env
+                             , dict      :: Dictionary
                              , compiling :: Bool }
                              deriving (Show)
 
 type Stack =  [Val]
-type Env = [(String, Val)]
+type Dictionary = [(String, Val)]
 
 
 run :: Forth a -> ForthState -> IO (a, ForthState)
@@ -25,14 +25,14 @@ run x =
 
 new :: [(String, Forth Val)] -> ForthState
 new bindings =
-  ForthState [] env False
-  where env = map wrap bindings
+  ForthState [] dict False
+  where dict = map wrap bindings
         wrap (s,f) = (s, Primitive f)
 
 -- Env
-envLookup :: String -> Forth Val
-envLookup w = do
-  e <- env <$> get
+dictLookup :: String -> Forth Val
+dictLookup w = do
+  e <- dict <$> get
   case lookup w e of
     Just w ->
       return w

@@ -10,7 +10,7 @@ eval val = do
     Number n ->
       push val
     Word w -> do
-      (Primitive op) <- envLookup w
+      (Primitive op) <- dictLookup w
       op
     _ -> return Nil
   printStack

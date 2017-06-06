@@ -4,10 +4,10 @@ import           Control.Monad.Trans
 import           Data.IORef
 import           Eval
 import           Parser
+import           Primitives
 import           System.Console.Haskeline
 import           System.Console.Repl
 import           Types
-import Primitives
 
 evalLine :: String -> Forth ()
 evalLine line =
@@ -21,7 +21,7 @@ evalLine line =
 main =
   repl
   where repl =
-          runInputT defaultSettings (loop (new primitiveWords))
+          runInputT defaultSettings (loop (new dictionary))
         loop state = do
           line <- getInputLine "=> "
           case line of
