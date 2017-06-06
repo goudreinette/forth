@@ -13,11 +13,11 @@ eval val = do
       s <- get
       case mode s of
         Compile | w == ";" ->
-          dictLookup w >>= invoke
+          dictLookup w >>= invoke . wordType
         Compile ->
           push (Symbol w)
         Interpret ->
-          dictLookup w >>= invoke
+          dictLookup w >>= invoke . wordType
     _ -> return Nil
   printStack
   return r
@@ -29,7 +29,6 @@ evalMany vals = last <$> traverse eval vals
 
 
 -- Invoke
-invoke :: Val -> Forth Val
+invoke :: WordType -> Forth Val
 invoke (Primitive op) = op
 invoke (User stack)   = evalMany stack
-invoke x              = error ("not a valid word: " ++ show x)

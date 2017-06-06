@@ -33,7 +33,7 @@ new :: [(String, Forth Val)] -> ForthState
 new bindings =
   ForthState [] [] Interpret dict
   where dict = map wrap bindings
-        wrap (s,f) = (s, Primitive f)
+        wrap (s,f) = (s, Word False $ Primitive f)
 
 modifyState :: (ForthState -> ForthState) -> Forth Val
 modifyState f = do
@@ -72,7 +72,7 @@ compileMode = setMode Compile
 interpretMode :: Forth Val
 interpretMode = do
   (Symbol w:body) <- reverse . stack <$> get
-  defineWord w (User body)
+  defineWord w (Word False $ User body)
   modify (`setStack` [])
   setMode Interpret
 
@@ -128,15 +128,16 @@ printStack = do
 -- Val
 data Val = Number Int
          | Symbol String
-         | Primitive (Forth Val)
-         | User [Val]
+         | Word { immediate:: Bool, wordType :: WordType }
          | Nil
 
+data WordType = Primitive (Forth Val)
+              | User [Val]
 
 
 instance Show Val where
-  show (Number n)    = show n
-  show (Symbol s)      = s
-  show (User _)      = "<user>"
-  show (Primitive _) = "<primitive>"
-  show Nil           = "ok"
+  show (Number n)                    = show n
+  show (Symbol s)                    = s
+  show Word {wordType = User _}      = "<user>"
+  show Word {wordType = Primitive _} = "<primitive>"
+  show Nil                           = "ok"
