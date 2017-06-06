@@ -52,9 +52,17 @@ dictLookup w = do
       error ("Lookup failed: " ++ w)
 
 defineWord :: String -> Val -> Forth Val
-defineWord s v =
-  modifyState $ \state@ForthState {dict = d} ->
+defineWord s v = do
+  d  <- dict <$> get
+  liftIO (print d)
+
+  modify $ \state@ForthState {dict = d} ->
     state {dict = (s, v):d}
+
+  d  <- dict <$> get
+  liftIO (print d)
+  return Nil
+
 
 
 
@@ -64,8 +72,9 @@ compileMode = setMode Compile
 
 interpretMode :: Forth Val
 interpretMode = do
-  s <- stack <$> get
-
+  (Word w:body) <- reverse . stack <$> get
+  defineWord w (User body)
+  modify (`setStack` [])
   setMode Interpret
 
 setMode :: Mode -> Forth Val
