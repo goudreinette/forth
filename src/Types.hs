@@ -73,7 +73,7 @@ interpretMode :: Forth Val
 interpretMode = do
   (Symbol w:body) <- reverse . stack <$> get
   defineWord w (Word False $ User body)
-  modify (`setStack` [])
+  modify (setStack [])
   setMode Interpret
 
 setMode :: Mode -> Forth Val
@@ -92,15 +92,15 @@ stack state =
     Interpret -> interpretStack state
     Compile   -> compileStack state
 
-setStack :: ForthState -> Stack -> ForthState
-setStack state stack =
+setStack ::Stack -> ForthState -> ForthState
+setStack stack state =
   case mode state of
     Interpret -> state {interpretStack = stack}
     Compile   -> state {compileStack = stack}
 
 updateStack :: (Stack -> Stack) -> ForthState -> ForthState
 updateStack f state =
-  setStack state $ f $ stack state
+  setStack (f $ stack state) state
 
 
 push :: Val -> Forth Val
@@ -114,7 +114,7 @@ pop = do
     [] ->
       return Nil
     (x:xs) -> do
-      put (setStack state xs)
+      modify (setStack xs)
       return x
 
 
