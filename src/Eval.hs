@@ -6,21 +6,19 @@ import           Types
 
 eval :: Val -> Forth Val
 eval val = do
-  r <- case val of
+  state <- get
+  case val of
     Number n ->
       push val
-    Symbol w -> do
-      s <- get
-      case mode s of
+    Symbol w ->
+      case mode state of
         Compile | w == ";" ->
           dictLookup w >>= invoke . wordType
         Compile ->
-          push (Symbol w)
+          push val
         Interpret ->
           dictLookup w >>= invoke . wordType
     _ -> return Nil
-  printStack
-  return r
 
 
 evalMany ::  [Val] -> Forth Val
