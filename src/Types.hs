@@ -1,5 +1,6 @@
 module Types where
 
+import           Control.Lens        ((&), (<&>))
 import           Control.Monad.State
 import           Data.IORef
 import           Data.List.Extra
@@ -58,7 +59,7 @@ defineWord s v =
 
 printDict :: Forth Val
 printDict = do
-  d <- dict <$> get
+  d <- get <&> dict
   liftIO (print d)
   return Nil
 
@@ -71,7 +72,7 @@ compileMode = setMode Compile
 
 interpretMode :: Forth Val
 interpretMode = do
-  (Symbol w:body) <- reverse . stack <$> get
+  (Symbol w:body) <- get <&> stack <&> reverse
   defineWord w (makeWord body)
   modify (setStack [])
   setMode Interpret
@@ -104,7 +105,7 @@ updateStack f state =
 
 
 push :: Val -> Forth Val
-push v = modifyState (updateStack (cons v))
+push v = modifyState $ updateStack $ cons v
 
 
 pop :: Forth Val
@@ -121,8 +122,9 @@ pop = do
 printStack :: Forth ()
 printStack = do
   state <- get
-  let str =  showMode (mode state) ++ "|" ++ unwords (map show (reverse (stack state))) ++ "|"
-  liftIO $ putStrLn str
+  let m = mode state & showMode
+      s = stack state & reverse & map show & unwords
+  liftIO $ putStrLn (m ++ "|" ++ s ++ "|")
 
 
 -- Val
