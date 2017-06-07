@@ -13,20 +13,24 @@ eval val = do
     Symbol w ->
       case mode state of
         Compile | w == ";" ->
-          dictLookup w >>= invoke . wordType
+          dictLookup w >>= invoke
         Compile ->
           push val
         Interpret ->
-          dictLookup w >>= invoke . wordType
+          dictLookup w >>= invoke
     _ -> return Nil
 
 
-evalMany ::  [Val] -> Forth Val
-evalMany vals = last <$> traverse eval vals
+evalMany ::  [Val] -> Forth [Val]
+evalMany = traverse eval
 
+evalBody ::  [Val] -> Forth Val
+evalBody body = last <$> evalMany body
 
 
 -- Invoke
-invoke :: WordType -> Forth Val
-invoke (Primitive op) = op
-invoke (User stack)   = evalMany stack
+invoke :: Val -> Forth Val
+invoke f =
+  case wordType f of
+    Primitive op -> op
+    User stack   -> evalBody stack

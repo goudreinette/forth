@@ -5,7 +5,7 @@ import           Control.Monad.State
 import           Data.IORef
 import           Data.List.Extra
 
--- Forth
+{- State -}
 newtype Forth a = Forth
   { unForth :: StateT ForthState IO a }
   deriving (Functor, Applicative, Monad,
@@ -27,8 +27,7 @@ type Dictionary = [(String, Val)]
 
 
 run :: Forth a -> ForthState -> IO (a, ForthState)
-run x =
-  runStateT (unForth x)
+run = runStateT . unForth
 
 new :: [(String, Forth Val)] -> ForthState
 new bindings =
@@ -42,7 +41,7 @@ modifyState f = do
   return Nil
 
 
--- Dictionary
+{- Dictionary -}
 dictLookup :: String -> Forth Val
 dictLookup w = do
   e <- dict <$> get
@@ -65,8 +64,7 @@ printDict = do
 
 
 
-
--- Mode
+{- Mode -}
 compileMode :: Forth Val
 compileMode = setMode Compile
 
@@ -86,7 +84,7 @@ showMode Interpret = "i"
 showMode Compile   = "c"
 
 
--- Stack
+{- Stack -}
 stack :: ForthState -> Stack
 stack state =
   case mode state of
@@ -127,10 +125,10 @@ printStack = do
   liftIO $ putStrLn (m ++ "|" ++ s ++ "|")
 
 
--- Val
+{- Val -}
 data Val = Number Int
          | Symbol String
-         | Word { immediate:: Bool, wordType :: WordType }
+         | Word { immediate :: Bool, wordType :: WordType }
          | Nil
 
 data WordType = Primitive (Forth Val)
@@ -142,7 +140,7 @@ instance Show Val where
   show (Symbol s)                    = s
   show Word {wordType = User _}      = "<user>"
   show Word {wordType = Primitive _} = "<primitive>"
-  show Nil                           = "ok"
+  show Nil                           = ""
 
 
 makeWord :: Stack -> Val

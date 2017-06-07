@@ -1,5 +1,6 @@
 module Main where
 
+import           Control.Lens             ((&))
 import           Control.Monad.State
 import           Control.Monad.Trans
 import           Data.IORef
@@ -15,11 +16,16 @@ evalLine line =
   case parseLine line of
     Right vs -> do
       r <- evalMany vs
-      s <- get
       printStack
-      liftIO (print r)
+      showResult r
     Left e   -> liftIO (printError e)
 
+showResult rs =
+  liftIO $ putStrLn (rstr ++ ok)
+  where rstr = map show rs
+             & filter (/= "")
+             & unwords
+        ok = if null rstr then "ok" else " ok"
 
 main =
   repl
