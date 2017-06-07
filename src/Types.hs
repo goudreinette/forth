@@ -72,7 +72,7 @@ compileMode = setMode Compile
 interpretMode :: Forth Val
 interpretMode = do
   (Symbol w:body) <- reverse . stack <$> get
-  defineWord w (Word False $ User body)
+  defineWord w (makeWord body)
   modify (setStack [])
   setMode Interpret
 
@@ -141,3 +141,7 @@ instance Show Val where
   show Word {wordType = User _}      = "<user>"
   show Word {wordType = Primitive _} = "<primitive>"
   show Nil                           = "ok"
+
+
+makeWord :: Stack -> Val
+makeWord = Word False . User
