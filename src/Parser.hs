@@ -12,7 +12,7 @@ exprs = many expr
 
 expr :: Parser Val
 expr =
-  between spaces spaces $ word <|> number <|> quotation
+  between spaces spaces $ word <|> number <|> bool <|> quotation
 
 
 number :: Parser Val
@@ -21,6 +21,13 @@ number = Number <$> int
 word :: Parser Val
 word =
   Symbol <$> many1 (oneOf wordChars <|> letter)
+
+bool :: Parser Val
+bool = do
+  b <- oneOf "tf"
+  return $ case b of
+    't' -> Bool True
+    'f' -> Bool False
 
 
 quotation :: Parser Val
