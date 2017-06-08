@@ -1,5 +1,6 @@
 module Primitives where
 
+import           Eval
 import           Types
 
 dictionary =
@@ -15,12 +16,18 @@ dictionary =
    (".", pop),
    ("dup", dup),
    ("swap", swap),
+   ("call", call),
 
    (":", compileMode),
    (";", interpretMode),
 
    ("words", printDict)]
 
+
+-- Quotations
+call = do
+  (Word _ (User stack)) <- pop
+  evalBody stack
 
 -- Helpers
 numOp f = do

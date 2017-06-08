@@ -11,7 +11,7 @@ exprs = many1 expr
 expr :: Parser Val
 expr = do
   spaces
-  e <- word <|> number <|> lambda
+  e <- word <|> number <|> quotation
   spaces
   return e
 
@@ -23,8 +23,8 @@ word = do
   w <- many1 (oneOf ".+-/*:;!@#$%^&*<>" <|> letter)
   return $ Symbol w
 
-lambda :: Parser Val
-lambda = do
+quotation :: Parser Val
+quotation = do
   char '['
   es <- exprs
   char ']'

@@ -141,10 +141,14 @@ data WordType = Primitive (Forth Val)
 instance Show Val where
   show (Number n)                    = show n
   show (Symbol s)                    = s
-  show Word {wordType = User _}      = "<user>"
+  show Word {wordType = User s}      = showQuotation s
   show Word {wordType = Primitive _} = "<primitive>"
   show Nil                           = ""
 
 
 makeWord :: Stack -> Val
 makeWord = Word False . User
+
+showQuotation :: Stack -> String
+showQuotation s =
+  "[" ++ unwords (map show s) ++ "]"
