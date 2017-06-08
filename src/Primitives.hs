@@ -46,7 +46,7 @@ numBinOp f = do
 equal = do
   x <- pop
   y <- pop
-  push (x == y)
+  push (Bool (x == y))
 
 -- Stack Manipulation
 dup = do
