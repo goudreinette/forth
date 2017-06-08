@@ -20,7 +20,7 @@ number = Number <$> int
 
 word :: Parser Val
 word = do
-  w <- many1 (oneOf ".+-/*:;!@#$%^&*<>" <|> letter)
+  w <- many1 (oneOf ".+-/*:;!@#$%^&*<>=" <|> letter)
   return $ Symbol w
 
 quotation :: Parser Val
