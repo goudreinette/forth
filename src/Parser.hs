@@ -4,6 +4,8 @@ import           Text.ParserCombinators.Parsec
 import           Text.ParserCombinators.Parsec.Number (int)
 import           Types
 
+wordChars = ".+-/*:;!@#$%^&*<>="
+
 -- Parsers
 exprs :: Parser [Val]
 exprs = many expr
@@ -17,9 +19,9 @@ number :: Parser Val
 number = Number <$> int
 
 word :: Parser Val
-word = do
-  w <- many1 (oneOf ".+-/*:;!@#$%^&*<>=" <|> letter)
-  return $ Symbol w
+word =
+  Symbol <$> many1 (oneOf wordChars <|> letter)
+
 
 quotation :: Parser Val
 quotation = do
