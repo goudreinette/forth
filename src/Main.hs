@@ -23,6 +23,7 @@ evalLine line =
 showResult rs =
   liftIO $ putStrLn (rstr ++ ok)
   where rstr = map show rs
+             & reverse
              & filter (/= "")
              & unwords
         ok = if null rstr then "ok" else " ok"
