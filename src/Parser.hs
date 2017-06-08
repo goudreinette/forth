@@ -8,7 +8,7 @@ wordChars = ".+-/*:;!@#$%^&*<>="
 
 -- Parsers
 exprs :: Parser [Val]
-exprs = many1 expr
+exprs = many expr
 
 expr :: Parser Val
 expr =
