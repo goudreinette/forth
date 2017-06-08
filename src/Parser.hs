@@ -6,10 +6,14 @@ import           Types
 
 -- Parsers
 exprs :: Parser [Val]
-exprs = sepBy expr spaces
+exprs = many expr
 
 expr :: Parser Val
-expr = word <|> number
+expr = do
+  spaces
+  e <- word <|> number
+  spaces
+  return e
 
 number :: Parser Val
 number = Number <$> int
@@ -18,6 +22,14 @@ word :: Parser Val
 word = do
   w <- many1 (oneOf ".+-/*:;!@#$%^&*<>" <|> letter)
   return $ Symbol w
+
+lambda :: Parser Val
+lambda = do
+  char '['
+  es <- exprs
+  char ']'
+  return $ makeWord es
+
 
 
 -- API
