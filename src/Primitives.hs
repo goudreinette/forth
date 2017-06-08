@@ -13,6 +13,8 @@ dictionary =
    ("negate", numOp negate),
    ("abs", numOp abs),
 
+   ("=", equal),
+
    (".", pop),
    ("dup", dup),
    ("swap", swap),
@@ -39,6 +41,12 @@ numBinOp f = do
   (Number y) <- pop
   push (Number (f x y))
 
+
+-- Equality
+equal = do
+  x <- pop
+  y <- pop
+  push (x == y)
 
 -- Stack Manipulation
 dup = do

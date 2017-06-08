@@ -130,9 +130,11 @@ printStack = do
 
 {- Val -}
 data Val = Number Int
+         | Bool Bool
          | Symbol String
          | Word { immediate :: Bool, wordType :: WordType }
          | Nil
+         deriving (Eq)
 
 data WordType = Primitive (Forth Val)
               | User [Val]
@@ -140,11 +142,15 @@ data WordType = Primitive (Forth Val)
 
 instance Show Val where
   show (Number n)                    = show n
+  show (Bool b)                    = if b then "t" else "f"
   show (Symbol s)                    = s
   show Word {wordType = User s}      = showQuotation s
   show Word {wordType = Primitive _} = "<primitive>"
   show Nil                           = ""
 
+instance Eq WordType where
+  User s == User s' = s == s'
+  _ == _ = False
 
 makeWord :: Stack -> Val
 makeWord = Word False . User
