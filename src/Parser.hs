@@ -6,12 +6,12 @@ import           Types
 
 -- Parsers
 exprs :: Parser [Val]
-exprs = many expr
+exprs = many1 expr
 
 expr :: Parser Val
 expr = do
   spaces
-  e <- word <|> number
+  e <- word <|> number <|> lambda
   spaces
   return e
 

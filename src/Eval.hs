@@ -10,6 +10,8 @@ eval val = do
   case val of
     Number n ->
       push val
+    Word _ _ ->
+      push val
     Symbol w ->
       case mode state of
         Compile | w == ";" ->
