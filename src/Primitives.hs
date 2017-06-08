@@ -14,6 +14,7 @@ dictionary =
    ("abs", numOp abs),
 
    ("=", equal),
+   ("if", if'),
 
    (".", pop),
    ("dup", dup),
@@ -47,6 +48,16 @@ equal = do
   x <- pop
   y <- pop
   push (Bool (x == y))
+
+if' = do
+  y <- pop
+  x <- pop
+  b <- pop
+  if b == Bool False then
+    invoke y
+  else
+    invoke x
+
 
 -- Stack Manipulation
 dup = do

@@ -8,11 +8,11 @@ wordChars = ".+-/*:;!@#$%^&*<>="
 
 -- Parsers
 exprs :: Parser [Val]
-exprs = many expr
+exprs = many1 expr
 
 expr :: Parser Val
 expr =
-  between spaces spaces $ word <|> number <|> bool <|> quotation
+  between spaces spaces $ bool <|> word <|> number <|> quotation
 
 
 number :: Parser Val
