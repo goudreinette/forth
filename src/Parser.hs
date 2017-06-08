@@ -6,14 +6,12 @@ import           Types
 
 -- Parsers
 exprs :: Parser [Val]
-exprs = many1 expr
+exprs = many expr
 
 expr :: Parser Val
-expr = do
-  spaces
-  e <- word <|> number <|> quotation
-  spaces
-  return e
+expr =
+  between spaces spaces $ word <|> number <|> quotation
+
 
 number :: Parser Val
 number = Number <$> int
