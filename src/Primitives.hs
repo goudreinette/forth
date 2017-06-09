@@ -20,6 +20,8 @@ dictionary =
    ("dup", dup),
    ("swap", swap),
    ("call", call),
+   ("compose", compose),
+   ("curry", curry'),
 
    (":", compileMode),
    (";", interpretMode),
@@ -31,6 +33,17 @@ dictionary =
 call = do
   (Word _ (User stack)) <- pop
   evalBody stack
+
+compose = do
+  (Word _ (User stackY)) <- pop
+  (Word _ (User stackX)) <- pop
+  push $ makeWord (stackX ++ stackY)
+
+curry' = do
+  (Word _ (User stack)) <- pop
+  x <- pop
+  push $ makeWord (x : stack)
+
 
 -- Helpers
 numOp f = do
