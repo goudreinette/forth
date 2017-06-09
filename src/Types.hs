@@ -149,7 +149,7 @@ instance Show Val where
   show Nil                           = ""
 
 instance Eq WordType where
-  User s == User s' = s == s'
+  User s == User z = s == z
   _ == _ = False
 
 makeWord :: Stack -> Val

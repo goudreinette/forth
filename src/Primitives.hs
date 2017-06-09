@@ -31,8 +31,8 @@ dictionary =
 
 -- Quotations
 call = do
-  (Word _ (User stack)) <- pop
-  evalBody stack
+  q <- pop
+  evalBody (wordBody q)
 
 compose = do
   y <- pop
