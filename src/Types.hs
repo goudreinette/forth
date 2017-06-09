@@ -142,7 +142,7 @@ data WordType = Primitive (Forth Val)
 
 instance Show Val where
   show (Number n)                    = show n
-  show (Bool b)                    = if b then "t" else "f"
+  show (Bool b)                      = if b then "t" else "f"
   show (Symbol s)                    = s
   show Word {wordType = User s}      = showQuotation s
   show Word {wordType = Primitive _} = "<primitive>"
@@ -154,6 +154,9 @@ instance Eq WordType where
 
 makeWord :: Stack -> Val
 makeWord = Word False . User
+
+wordBody :: Val -> [Val]
+wordBody (Word _ (User stack)) = stack
 
 showQuotation :: Stack -> String
 showQuotation s =

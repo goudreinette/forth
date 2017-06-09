@@ -35,14 +35,14 @@ call = do
   evalBody stack
 
 compose = do
-  (Word _ (User stackY)) <- pop
-  (Word _ (User stackX)) <- pop
-  push $ makeWord (stackX ++ stackY)
+  y <- pop
+  x <- pop
+  push $ makeWord (wordBody x ++ wordBody y)
 
 curry' = do
-  (Word _ (User stack)) <- pop
+  q <- pop
   x <- pop
-  push $ makeWord (x : stack)
+  push $ makeWord (x : wordBody q)
 
 
 -- Helpers
