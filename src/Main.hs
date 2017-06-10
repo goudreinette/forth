@@ -17,7 +17,6 @@ evalLine line =
     Right vs -> do
       r <- evalMany vs
       printStack
-      showResult r
     Left e   -> liftIO (printError e)
 
 showResult rs =

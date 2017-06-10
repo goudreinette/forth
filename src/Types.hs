@@ -29,16 +29,15 @@ type Dictionary = [(String, Val)]
 run :: Forth a -> ForthState -> IO (a, ForthState)
 run = runStateT . unForth
 
-new :: [(String, Forth Val)] -> ForthState
+new :: [(String, Forth ())] -> ForthState
 new bindings =
   ForthState [] [] Interpret dict
   where dict = map wrap bindings
         wrap (s,f) = (s, Word False $ Primitive f)
 
-modifyState :: (ForthState -> ForthState) -> Forth Val
-modifyState f = do
-  modify f
-  return Nil
+modifyState :: (ForthState -> ForthState) -> Forth ()
+modifyState =
+  modify
 
 
 {- Dictionary -}
@@ -51,33 +50,32 @@ dictLookup w = do
     Nothing ->
       error ("Lookup failed: " ++ w)
 
-defineWord :: String -> Val -> Forth Val
+defineWord :: String -> Val -> Forth ()
 defineWord s v =
-  modifyState $ \state@ForthState {dict = d} ->
+  modify $ \state@ForthState {dict = d} ->
     state {dict = (s, v):d}
 
-printDict :: Forth Val
+printDict :: Forth ()
 printDict = do
   d <- get <&> dict
   liftIO (print d)
-  return Nil
 
 
 
 {- Mode -}
-compileMode :: Forth Val
+compileMode :: Forth ()
 compileMode = setMode Compile
 
-interpretMode :: Forth Val
+interpretMode :: Forth ()
 interpretMode = do
   (Symbol w:body) <- get <&> stack <&> reverse
   defineWord w (makeWord body)
   clearStack
   setMode Interpret
 
-setMode :: Mode -> Forth Val
+setMode :: Mode -> Forth ()
 setMode m =
-  modifyState $ \state -> state {mode = m}
+  modify $ \state -> state {mode = m}
 
 showMode :: Mode -> String
 showMode Interpret = "i"
@@ -101,12 +99,12 @@ updateStack :: (Stack -> Stack) -> ForthState -> ForthState
 updateStack f state =
   setStack (f $ stack state) state
 
-clearStack :: Forth Val
-clearStack = modifyState (setStack [])
+clearStack :: Forth ()
+clearStack = modify (setStack [])
 
 
-push :: Val -> Forth Val
-push v = modifyState $ updateStack $ cons v
+push :: Val -> Forth ()
+push v = modify $ updateStack $ cons v
 
 
 pop :: Forth Val
@@ -117,6 +115,7 @@ pop = do
       return Nil
     (x:xs) -> do
       modify (setStack xs)
+      printVal x
       return x
 
 
@@ -136,7 +135,7 @@ data Val = Number Int
          | Nil
          deriving (Eq)
 
-data WordType = Primitive (Forth Val)
+data WordType = Primitive (Forth ())
               | User [Val]
 
 
@@ -161,3 +160,6 @@ wordBody (Word _ (User stack)) = stack
 showQuotation :: Stack -> String
 showQuotation s =
   "[" ++ unwords (map show s) ++ "]"
+
+printVal v =
+  liftIO (putStr $ show v ++ " ")

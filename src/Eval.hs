@@ -4,7 +4,7 @@ import           Control.Monad.State
 import           Types
 
 
-eval :: Val -> Forth Val
+eval :: Val -> Forth ()
 eval val = do
   state <- get
   case val of
@@ -22,19 +22,17 @@ eval val = do
           push val
         Interpret ->
           dictLookup w >>= invoke
-    _ -> return Nil
 
 
-evalMany ::  [Val] -> Forth [Val]
-evalMany = traverse eval
-
-evalBody ::  [Val] -> Forth Val
-evalBody body = last <$> evalMany body
+evalMany ::  [Val] -> Forth ()
+evalMany vs = do
+  traverse eval vs
+  return ()
 
 
 -- Invoke
-invoke :: Val -> Forth Val
+invoke :: Val -> Forth ()
 invoke f =
   case wordType f of
     Primitive op -> op
-    User stack   -> evalBody stack
+    User stack   -> evalMany stack

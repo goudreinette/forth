@@ -16,7 +16,7 @@ dictionary =
    ("=", equal),
    ("if", if'),
 
-   (".", pop),
+   (".", pop'),
    ("dup", dup),
    ("swap", swap),
    ("call", call),
@@ -32,7 +32,7 @@ dictionary =
 -- Quotations
 call = do
   q <- pop
-  evalBody (wordBody q)
+  evalMany (wordBody q)
 
 compose = do
   y <- pop
@@ -73,6 +73,10 @@ if' = do
 
 
 -- Stack Manipulation
+pop' = do
+  pop
+  return ()
+
 dup = do
   x <- pop
   push x
