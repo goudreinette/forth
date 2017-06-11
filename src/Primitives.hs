@@ -17,6 +17,7 @@ dictionary =
    ("if", if'),
 
    (".", pop'),
+   (".s", printStack),
    ("dup", dup),
    ("swap", swap),
    ("call", call),
