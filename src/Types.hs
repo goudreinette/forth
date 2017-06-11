@@ -123,7 +123,7 @@ printStack = do
   state <- get
   let m = mode state & showMode
       s = stack state & reverse & map show & unwords
-  liftIO $ putStrLn $ m ++ "|" ++ s ++ "|"
+  liftIO $ putStr $ m ++ "|" ++ s ++ "| "
 
 
 {- Val -}
