@@ -11,8 +11,8 @@ exprs :: Parser [Val]
 exprs = many expr
 
 expr :: Parser Val
-expr =
-  between spaces spaces $ bool <|> word <|> number <|> quotation
+expr = between spaces spaces $
+  bool <|> word <|> number <|> quotation
 
 
 number :: Parser Val

@@ -33,7 +33,7 @@ dictionary =
 -- Quotations
 call = do
   q <- pop
-  evalMany (wordBody q)
+  invoke q
 
 compose = do
   y <- pop
