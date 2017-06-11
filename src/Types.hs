@@ -115,7 +115,6 @@ pop = do
       return Nil
     (x:xs) -> do
       modify (setStack xs)
-      printVal x
       return x
 
 
@@ -124,7 +123,7 @@ printStack = do
   state <- get
   let m = mode state & showMode
       s = stack state & reverse & map show & unwords
-  liftIO $ putStrLn (m ++ "|" ++ s ++ "|")
+  printVal $ m ++ "|" ++ s ++ "|"
 
 
 {- Val -}

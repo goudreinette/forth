@@ -15,8 +15,8 @@ evalLine :: String -> Forth ()
 evalLine line =
   case parseLine line of
     Right vs -> do
-      r <- evalMany vs
-      printStack
+      evalMany vs
+      liftIO $ putStrLn "ok"
     Left e   -> liftIO (printError e)
 
 showResult rs =
@@ -26,6 +26,7 @@ showResult rs =
              & filter (/= "")
              & unwords
         ok = if null rstr then "ok" else " ok"
+
 
 main =
   repl

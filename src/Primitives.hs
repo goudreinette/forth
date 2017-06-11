@@ -74,8 +74,8 @@ if' = do
 
 -- Stack Manipulation
 pop' = do
-  pop
-  return ()
+  v <- pop
+  printVal v
 
 dup = do
   x <- pop
