@@ -58,7 +58,8 @@ defineWord s v =
 printDict :: Forth ()
 printDict = do
   d <- get <&> dict
-  liftIO (print d)
+  forM_ d printItem
+  where printItem (s, w) = liftIO $ putStrLn (s ++ " " ++ show w)
 
 
 
