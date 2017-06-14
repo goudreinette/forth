@@ -27,9 +27,7 @@ eval val = do
 
 
 evalMany ::  [Val] -> Forth ()
-evalMany vs = do
-  traverse eval vs
-  return ()
+evalMany vs = forM_ vs eval
 
 
 -- Invoke
