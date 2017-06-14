@@ -131,6 +131,7 @@ printStack = do
 data Val = Number Int
          | Bool Bool
          | Symbol String
+         | String String
          | Word { immediate :: Bool, wordType :: WordType }
          | Nil
          deriving (Eq)
@@ -146,6 +147,7 @@ instance Show Val where
   show Word {wordType = User s}      = showQuotation s
   show Word {wordType = Primitive _} = "<primitive>"
   show Nil                           = ""
+  show (String s)                    = show s
 
 instance Eq WordType where
   User s == User z = s == z

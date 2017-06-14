@@ -12,7 +12,7 @@ exprs = many expr
 
 expr :: Parser Val
 expr = between spaces spaces $
-  bool <|> word <|> number <|> quotation
+  bool <|> word <|> number <|> string' <|> quotation
 
 
 number :: Parser Val
@@ -36,6 +36,13 @@ quotation = do
   es <- exprs
   char ']'
   return $ makeWord es
+
+string' :: Parser Val
+string' = do
+  char '"'
+  s <- many (noneOf "\"")
+  char '"'
+  return $ String s
 
 
 

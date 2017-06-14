@@ -24,7 +24,6 @@ executable forth
                        transformers,
                        mtl,
                        parsec,
-                       indents,
                        parsec-numbers,
                        haskeline,
                        haskeline-repl,
@@ -32,4 +31,5 @@ executable forth
                        uri,
                        lens,
                        wreq,
-                       tostring
+                       tostring,
+                       process

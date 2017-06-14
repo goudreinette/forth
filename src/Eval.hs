@@ -14,6 +14,8 @@ eval val = do
       push val
     Word _ _ ->
       push val
+    String _ ->
+      push val
     Symbol w ->
       case mode state of
         Compile | w == ";" ->

@@ -1,7 +1,9 @@
 module Primitives where
 
 import           Eval
+import           System.Process
 import           Types
+import Control.Monad.Trans
 
 dictionary =
   [("+", numBinOp (+)),
@@ -27,7 +29,9 @@ dictionary =
    (":", compileMode),
    (";", interpretMode),
 
-   ("words", printDict)]
+   ("words", printDict),
+
+   ("sh", sh)]
 
 
 -- Quotations
@@ -88,3 +92,10 @@ swap = do
   y <- pop
   push x
   push y
+
+-- IO
+sh = do
+  (String x) <-pop
+  let (cmd:args) = words x
+  result <- liftIO $ readProcess cmd args ""
+  push $ String result
