@@ -14,7 +14,8 @@ newtype Forth a = Forth
 data ForthState = ForthState { interpretStack :: Stack
                              , compileStack   :: Stack
                              , mode           :: Mode
-                             , dict           :: Dictionary }
+                             , dict           :: Dictionary
+                             , readtable      :: [((String, String), Val)]}
                              deriving (Show)
 
 data Mode = Interpret
@@ -31,7 +32,7 @@ run = runStateT . unForth
 
 new :: [(String, Forth ())] -> ForthState
 new bindings =
-  ForthState [] [] Interpret dict
+  ForthState [] [] Interpret dict []
   where dict = map wrap bindings
         wrap (s,f) = (s, Word False $ Primitive f)
 
@@ -122,9 +123,8 @@ pop = do
 printStack :: Forth ()
 printStack = do
   state <- get
-  let m = mode state & showMode
-      s = stack state & reverse & map show & unwords
-  liftIO $ putStr $ m ++ "|" ++ s ++ "| "
+  let s = stack state & reverse & map show & unwords
+  liftIO $ putStr (s ++ " ")
 
 
 {- Val -}
