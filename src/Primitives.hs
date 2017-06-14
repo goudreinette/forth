@@ -95,7 +95,7 @@ swap = do
 
 -- IO
 sh = do
-  (String x) <-pop
+  (String x) <- pop
   let (cmd:args) = words x
-  result <- liftIO $ readProcess cmd args ""
+  result <- liftIO (readProcess cmd args "")
   push $ String result
