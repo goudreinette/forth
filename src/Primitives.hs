@@ -1,9 +1,9 @@
 module Primitives where
 
+import           Control.Monad.Trans
 import           Eval
 import           System.Process
 import           Types
-import Control.Monad.Trans
 
 dictionary =
   [("+", numBinOp (+)),
