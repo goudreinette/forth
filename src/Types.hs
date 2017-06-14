@@ -15,7 +15,7 @@ data ForthState = ForthState { interpretStack :: Stack
                              , compileStack   :: Stack
                              , mode           :: Mode
                              , dict           :: Dictionary
-                             , readtable      :: [((String, String), Val)]}
+                             , readtable      :: Readtable }
                              deriving (Show)
 
 data Mode = Interpret
@@ -25,6 +25,7 @@ data Mode = Interpret
 
 type Stack =  [Val]
 type Dictionary = [(String, Val)]
+type Readtable = [((String, String), Val)]
 
 
 run :: Forth a -> ForthState -> IO (a, ForthState)
